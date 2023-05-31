@@ -4,28 +4,21 @@ USE `ParkingManagement`;
 DROP TABLE IF EXISTS `ParkingSpot`;
 DROP TABLE IF EXISTS `Parker`;
 CREATE TABLE IF NOT EXISTS `Parker` (
-    `id` Int PRIMARY KEY AUTO_INCREMENT,
+    `id` VARCHAR(100) PRIMARY KEY,
+    `licensePlate` VARCHAR(50),
     `entryDate` DATETIME,
-    `èxitDate` DATETIME,
+    `exitDate` DATETIME,
     `seasonParker` TINYINT(1) NOT NULL,
     `parkingFee` DECIMAL
 );
 
-
 CREATE TABLE IF NOT EXISTS `ParkingSpot` (
     `id` Int AUTO_INCREMENT,
     `reserved` TINYINT(1) NOT NULL,
-    `parkerID` INT,
+    `parkerID` VARCHAR(100),
     PRIMARY KEY (`id`),
     FOREIGN KEY (`parkerID`) REFERENCES Parker(`id`)
 );
-
-
-
-
-
-
-
 
 
 INSERT INTO ParkingSpot (reserved, parkerID)

@@ -1,7 +1,11 @@
 package com.example.parkplatz.Controller;
 
-import com.example.parkplatz.Entity.Car;
-import com.example.parkplatz.Service.CarService;
+import com.example.parkplatz.Entity.Parker;
+import com.example.parkplatz.Entity.Parkingspot;
+import com.example.parkplatz.Entity.Result;
+import com.example.parkplatz.Service.ParkerService;
+import com.example.parkplatz.Service.ParkingManagement;
+import com.example.parkplatz.Service.ParkingSpotService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,44 +15,48 @@ import java.util.List;
 public class CarController {
 
     @Autowired
-    private CarService carService;
+    private ParkingManagement service;
+    @Autowired
+    private ParkerService parkerService;
+    @Autowired
+    private ParkingSpotService parkingSpotService;
 
-    @GetMapping("/GetAllCar")
-    public List<Car> getOneCar() {
-        return carService.getAllCars();
+    @GetMapping("/")
+    public String request() {
+        return "Plase take rest api.";
     }
 
-    @PutMapping("/updateOne")
-    public Car updateByName(@RequestBody Car car) throws Exception {
-        Car updatedCar = carService.updateByName(car);
-        if (updatedCar == null) {
-            throw new Exception("Update Failed.");
+    @PostMapping("/CheckIn")
+    public Result test(Parker parker) {
+        try {
+            service.CheckIn(parker);
+        } catch (Exception e) {
+            return new Result(500,e.getMessage());
         }
 
-        return updatedCar;
+        return new Result(200,"Check In Successfully!");
     }
 
-    @PostMapping("/insertOne")
-    public Car insertOne(@RequestBody Car car) throws Exception {
-        Car insertedCar = carService.insertOne(car);
-        if (insertedCar == null) {
-            throw new Exception("Insert Failed");
+    @PostMapping("/CheckOut")
+    public Result Checkout(Parkingspot parkingspot) {
+        Double parkingFee;
+
+        try {
+            parkingFee = service.CheckOut(parkingspot);
+        } catch (Exception e) {
+            return new Result(500,e.getMessage());
         }
 
-        return insertedCar;
+        return new Result(200,"Check Out Successfully! Please pay your parking fee " + parkingFee + '€');
     }
 
-    @DeleteMapping("/deleteOneByName/{name}")
-    public List<Car> deleteOneByName(@PathVariable String name) throws Exception {
-        if (name.equals("")) {
-            throw new Exception("Name must have an value.");
-        }
+    @GetMapping("/AllParkers")
+    public List<Parker> FindSet() {
+        return parkerService.FindSet();
+    }
 
-        List<Car> cars = carService.deleteOne(name);
-        if (cars.isEmpty()) {
-            throw new Exception("Delete Failed");
-        }
-
-        return cars;
+    @GetMapping("/AllParkingspots")
+    public List<Parkingspot> FindSet1() {
+        return parkingSpotService.FindSet();
     }
 }
